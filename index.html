@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Skolkollen — Granskning & Transparens</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1208;
+    --paper: #f5f0e8;
+    --paper-dark: #ede7d6;
+    --red: #c0392b;
+    --gold: #b8860b;
+    --stamp: #8b4513;
+    --muted: #6b5e4a;
+    --rule: #c8bfa8;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'IBM Plex Sans', sans-serif;
+    font-weight: 300;
+    background-image:
+      repeating-linear-gradient(
+        0deg,
+        transparent,
+        transparent 27px,
+        rgba(180,165,140,0.18) 27px,
+        rgba(180,165,140,0.18) 28px
+      );
+  }
+
+  /* MASTHEAD */
+  .masthead {
+    background: var(--ink);
+    color: var(--paper);
+    padding: 0;
+    border-bottom: 4px solid var(--gold);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .masthead::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      45deg,
+      transparent,
+      transparent 40px,
+      rgba(255,255,255,0.015) 40px,
+      rgba(255,255,255,0.015) 41px
+    );
+  }
+
+  .masthead-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 40px 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  .masthead-date {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+
+  .masthead-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(48px, 8vw, 96px);
+    font-weight: 900;
+    line-height: 0.9;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .masthead-sub {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 12px;
+    color: rgba(245,240,232,0.5);
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 12px;
+    margin-top: 12px;
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+  }
+
+  .masthead-sub span { color: var(--gold); margin-right: 6px; }
+
+  /* DISCLAIMER BANNER */
+  .disclaimer-banner {
+    background: var(--paper-dark);
+    border-left: 4px solid var(--gold);
+    border-bottom: 1px solid var(--rule);
+    padding: 14px 40px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+    line-height: 1.6;
+  }
+
+  .disclaimer-banner strong { color: var(--stamp); }
+
+  /* LAYOUT */
+  .container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 40px;
+  }
+
+  .layout {
+    display: grid;
+    grid-template-columns: 1fr 320px;
+    gap: 48px;
+    padding: 48px 0;
+    align-items: start;
+  }
+
+  /* SECTION HEADERS */
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .section-label {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--rule);
+    padding: 4px 10px;
+    background: var(--paper-dark);
+  }
+
+  .section-rule {
+    flex: 1;
+    height: 1px;
+    background: var(--rule);
+  }
+
+  /* DOCUMENT CARDS */
+  .doc-card {
+    background: white;
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--red);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    position: relative;
+    transition: transform 0.15s, box-shadow 0.15s;
+    cursor: default;
+  }
+
+  .doc-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0,0,0,0.08);
+  }
+
+  .doc-card.gold { border-left-color: var(--gold); }
+  .doc-card.stamp { border-left-color: var(--stamp); }
+
+  .doc-stamp {
+    position: absolute;
+    top: 16px;
+    right: 20px;
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 9px;
+    text-transform: uppercase;
+    letter-spacing: 0.15em;
+    color: var(--red);
+    border: 1.5px solid var(--red);
+    padding: 3px 8px;
+    opacity: 0.7;
+  }
+
+  .doc-stamp.gold { color: var(--gold); border-color: var(--gold); }
+  .doc-stamp.verified { color: #2e7d32; border-color: #2e7d32; }
+
+  .doc-meta {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 10px;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+  }
+
+  .doc-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 10px;
+    color: var(--ink);
+  }
+
+  .doc-desc {
+    font-size: 14px;
+    color: var(--muted);
+    line-height: 1.65;
+    margin-bottom: 16px;
+  }
+
+  .doc-link {
+    font-family: 'IBM Plex Mono', monospace;
+    font-size: 11px;
+    color: var(--red);
+    text-decoration: none;
+    letter-spacing: 0.1em;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-bottom: 1px solid transparent;
+    transition: border-color 0.15s;
+  }
+
+  .doc-link:hover { border-bottom-color: var(--red); }
+
+  /* VITTNESMÅL */
+  .testimony {
+    background: var(--paper-dark);
+    border: 1px solid var(--rule);
+    padding: 24px 28px;
+    margin-bottom: 20px;
+    position: relative;
+  }
+
+  .testimony::before {
+    content: '"';
+    font-family: 'Playfair Display', serif;
+    font-size: 80px;
+    font-style: italic;
+    color: var(--rule);
+    position: absolute;
+    top: -8px;
+    left: 16px;
+    line-height: 1;
+  }
+
+  .testimony-text {
+    font-size: 15px;
+    line-height: 1.75;
+    color: var(--ink);
+< truncated lines 260-640 >
+            trygghet och studiero. Rektor åläggs att vidta åtgärder senast 2024-06-01.
+          </p>
+          <a href="#" class="doc-link">↗ Visa originalhandling (PDF)</a>
+        </article>
+
+        <article class="doc-card gold">
+          <div class="doc-stamp gold">Kommunal handling</div>
+          <div class="doc-meta">Barn- och utbildningsnämnden · Dnr: BUN-2023:0000 · 2023-11-20</div>
+          <h2 class="doc-title">Protokoll — Kvalitetsuppföljning läsår 2022/23</h2>
+          <p class="doc-desc">
+            Protokoll från nämndsmöte där skolans resultat och klagomålshantering diskuterades.
+            Flera avvikelser noterade mot kommunens egna mål.
+          </p>
+          <a href="#" class="doc-link">↗ Visa originalhandling (PDF)</a>
+        </article>
+
+        <article class="doc-card stamp">
+          <div class="doc-stamp">Lagakraftvunnet</div>
+          <div class="doc-meta">Skolinspektionen · Dnr: 2023:0000 · 2023-06-30</div>
+          <h2 class="doc-title">Föreläggande om förbättringsåtgärder</h2>
+          <p class="doc-desc">
+            Formellt föreläggande från Skolinspektionen som kräver dokumenterade förbättringsplaner
+            inom tre månader. Uppföljning planeras till höstterminen 2023.
+          </p>
+          <a href="#" class="doc-link">↗ Visa originalhandling (PDF)</a>
+        </article>
+      </section>
+
+      <!-- VITTNESMÅL -->
+      <section id="vittnesmål" style="margin-top: 48px;">
+        <div class="section-header">
+          <div class="section-label">Vittnesmål från föräldrar</div>
+          <div class="section-rule"></div>
+        </div>
+
+        <p style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--muted); margin-bottom: 20px; letter-spacing: 0.08em; line-height: 1.7;">
+          NOTERA: Nedanstående är personliga upplevelser och ska läsas som sådana.
+          Identiteter anonymiseras på begäran. Vill du dela ditt vittnesmål? Se "Dela info".
+        </p>
+
+        <blockquote class="testimony">
+          <p class="testimony-text">
+            Vi kontaktade skolan upprepade gånger om mobbning under höstterminen utan att få svar.
+            Först efter att vi skickade ett formellt klagomål till Skolinspektionen bokades ett möte in.
+            Det borde inte behöva gå så långt.
+          </p>
+          <div class="testimony-meta">
+            <span>Förälder, åk 4 · Insänt 2024-01</span>
+            <span>Anonymiserat på begäran</span>
+          </div>
+        </blockquote>
+
+        <blockquote class="testimony">
+          <p class="testimony-text">
+            Trots att Skolinspektionens beslut kom i mars verkar ingenting ha förändrats.
+            Samma personal, samma rutiner, inga svar på hur åtgärdsprogrammet ser ut.
+            Vi fick be om att få ta del av handlingarna via kommunen.
+          </p>
+          <div class="testimony-meta">
+            <span>Förälder, åk 6 · Insänt 2024-04</span>
+            <span>Namn publiceras med tillstånd</span>
+          </div>
+        </blockquote>
+      </section>
+
+    </main>
+
+    <!-- SIDEBAR -->
+    <aside>
+
+      <!-- CHAT -->
+      <div class="chat-container" style="margin-bottom:24px;">
+        <div class="chat-header">
+          <div class="chat-dot"></div>
+          <div class="chat-header-text">Fråga om dokumenten</div>
+        </div>
+        <div class="chat-messages" id="chatMessages">
+          <div class="msg ai">
+            <div class="msg-label">Assistent</div>
+            Hej! Jag kan svara på frågor baserat på de dokument som publicerats på denna sida. Vad undrar du?
+          </div>
+        </div>
+        <div class="chat-input-row">
+          <input class="chat-input" id="chatInput" placeholder="Skriv din fråga..." type="text">
+          <button class="chat-send" id="chatSend" onclick="sendMessage()">Skicka</button>
+        </div>
+      </div>
+
+      <!-- ARTIKLAR -->
+      <div class="sidebar-block" id="artiklar">
+        <h3>Relaterade artiklar</h3>
+        <ul class="sidebar-link-list">
+          <li>
+            <a href="#">Lokaltidningen: "Föräldrar kräver svar om skolans trygghet"</a>
+            <span class="link-meta">Lokaltidningen · 2024-04-02</span>
+          </li>
+          <li>
+            <a href="#">SVT Nyheter: Kritik mot skola i granskning</a>
+            <span class="link-meta">SVT · 2024-02-18</span>
+          </li>
+          <li>
+            <a href="#">Skolvärlden: Rekordmånga förelägganden 2023</a>
+            <span class="link-meta">Skolvärlden · 2024-01-10</span>
+          </li>
+          <li>
+            <a href="#">Lärarnas tidning: Så funkar tillsyn</a>
+            <span class="link-meta">Lärarnas tidning · 2023-09-05</span>
+          </li>
+        </ul>
+      </div>
+
+      <!-- OM SIDAN -->
+      <div class="sidebar-block" id="om">
+        <h3>Om denna sida</h3>
+        <p style="font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:12px;">
+          Skolkollen drivs av engagerade föräldrar och samlar offentlig information
+          om skolans brister och myndighetsbeslut på ett ställe.
+        </p>
+        <p style="font-size:13px; color:var(--muted); line-height:1.7;">
+          Alla dokument är offentliga handlingar hämtade direkt från
+          Skolinspektionen och kommunen via <em>begäran om allmän handling</em>.
+        </p>
+      </div>
+
+      <!-- DELA INFO -->
+      <div class="sidebar-block" id="kontakt">
+        <h3>Dela information</h3>
+        <p style="font-size:13px; color:var(--muted); line-height:1.7; margin-bottom:16px;">
+          Har du dokument, vittnesmål eller tips? Kontakta oss säkert och anonymt.
+        </p>
+        <a href="mailto:kontakt@skolkollen.example" style="
+          display:block;
+          text-align:center;
+          background:var(--ink);
+          color:var(--paper);
+          padding:12px;
+          font-family:'IBM Plex Mono',monospace;
+          font-size:11px;
+          letter-spacing:0.15em;
+          text-decoration:none;
+          text-transform:uppercase;
+          transition:background 0.15s;
+        " onmouseover="this.style.background='var(--red)'" onmouseout="this.style.background='var(--ink)'">
+          Skicka tips →
+        </a>
+      </div>
+
+    </aside>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-inner">
+    <div>
+      <strong style="color:var(--paper); font-family:'Playfair Display',serif; font-size:18px;">SKOLKOLLEN</strong><br><br>
+      Sidan återger offentliga handlingar och personliga vittnesmål.<br>
+      Alla myndighetsbeslut hänvisar till originalkällor med diarienummer.<br><br>
+      Rätt till genmäle: Skolan erbjuds alltid att svara på publicerat material.
+    </div>
+    <div>
+      <strong style="color:rgba(245,240,232,0.7);">Juridik & ansvar</strong><br><br>
+      Myndighetsdokument publiceras med stöd av offentlighetsprincipen (TF 2 kap).<br>
+      Vittnesmål är märkta som personliga upplevelser.<br><br>
+      Eventuella rättelsebegäranden: <a href="mailto:kontakt@skolkollen.example">kontakt@skolkollen.example</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Datum
+  const d = new Date();
+  const months = ['januari','februari','mars','april','maj','juni','juli','augusti','september','oktober','november','december'];
+  document.getElementById('currentDate').textContent =
+    `${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}`;
+
+  // CHAT med Claude API
+  const CONTEXT = `Du är en hjälpsam assistent på webbsidan Skolkollen. 
+Du svarar ENBART på frågor baserat på de dokument och vittnesmål som publicerats på sidan.
+Dokumenten handlar om en skola som fått tillsynsbeslut från Skolinspektionen (Dnr 2024:0000) 
+gällande brister i trygghet och studiero, ett föreläggande om förbättringsåtgärder (Dnr 2023:0000), 
+samt ett kommunalt protokoll om kvalitetsuppföljning (BUN-2023:0000).
+Vittnesmål från föräldrar beskriver upplevd mobbning och bristande kommunikation från skolan.
+Håll svaren kortfattade, faktabaserade och neutrala. Spekulera inte. 
+Svara på svenska.`;
+
+  let chatHistory = [];
+
+  async function sendMessage() {
+    const input = document.getElementById('chatInput');
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    input.value = '';
+    document.getElementById('chatSend').disabled = true;
+
+    appendMsg('user', msg);
+    chatHistory.push({ role: 'user', content: msg });
+
+    const typing = appendTyping();
+
+    try {
+      const res = await fetch('https://api.anthropic.com/v1/messages', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 1000,
+          system: CONTEXT,
+          messages: chatHistory
+        })
+      });
+
+      const data = await res.json();
+      typing.remove();
+
+      const reply = data.content?.[0]?.text || 'Kunde inte hämta svar.';
+      appendMsg('ai', reply);
+      chatHistory.push({ role: 'assistant', content: reply });
+
+    } catch (e) {
+      typing.remove();
+      appendMsg('ai', 'Fel vid anslutning. Försök igen senare.');
+    }
+
+    document.getElementById('chatSend').disabled = false;
+  }
+
+  function appendMsg(role, text) {
+    const box = document.getElementById('chatMessages');
+    const el = document.createElement('div');
+    el.className = `msg ${role}`;
+    el.innerHTML = `<div class="msg-label">${role === 'ai' ? 'Assistent' : 'Du'}</div>${escHtml(text)}`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+    return el;
+  }
+
+  function appendTyping() {
+    const box = document.getElementById('chatMessages');
+    const el = document.createElement('div');
+    el.className = 'msg ai';
+    el.innerHTML = `<div class="typing-dots"><span></span><span></span><span></span></div>`;
+    box.appendChild(el);
+    box.scrollTop = box.scrollHeight;
+    return el;
+  }
+
+  function escHtml(t) {
+    return t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\n/g,'<br>');
+  }
+
+  document.getElementById('chatInput').addEventListener('keydown', e => {
+    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMessage(); }
+  });
+</script>
+</body>
+    </html>
